@@ -606,6 +606,39 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@uiw/codemirror-theme-abyss@npm:^4.22.0":
+  version: 4.22.0
+  resolution: "@uiw/codemirror-theme-abyss@npm:4.22.0"
+  dependencies:
+    "@uiw/codemirror-themes": "npm:4.22.0"
+  checksum: 95507782d27ae664f33f4135b651992f6eff84eaee05febcec83f9813680982ea54c28a47be29b2b594599ef393d33a7ef52440846d2b651cbb82b600a781dea
+  languageName: node
+  linkType: hard
+
+"@uiw/codemirror-theme-aura@npm:^4.22.0":
+  version: 4.22.0
+  resolution: "@uiw/codemirror-theme-aura@npm:4.22.0"
+  dependencies:
+    "@uiw/codemirror-themes": "npm:4.22.0"
+  checksum: df86091d7d6dd3f8d292ae576d39f2efe3bc593f2ba7f19c3daece99eb3e44a94f613f02bc1710b083883113f3754042f92083d31ac093bb5b9da82a403dea94
+  languageName: node
+  linkType: hard
+
+"@uiw/codemirror-themes@npm:4.22.0":
+  version: 4.22.0
+  resolution: "@uiw/codemirror-themes@npm:4.22.0"
+  dependencies:
+    "@codemirror/language": "npm:^6.0.0"
+    "@codemirror/state": "npm:^6.0.0"
+    "@codemirror/view": "npm:^6.0.0"
+  peerDependencies:
+    "@codemirror/language": ">=6.0.0"
+    "@codemirror/state": ">=6.0.0"
+    "@codemirror/view": ">=6.0.0"
+  checksum: b1e60960ec0694379a1a4786ace3640effd572b2c15baf29dd0e2fe168430a83bf036885bf290117c223223f875e34ca529f753a1f103517672bbe04158ca9e4
+  languageName: node
+  linkType: hard
+
 "@uiw/react-codemirror@npm:^4.22.0":
   version: 4.22.0
   resolution: "@uiw/react-codemirror@npm:4.22.0"
@@ -1143,6 +1176,8 @@ __metadata:
     "@types/node": "npm:^20"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18"
+    "@uiw/codemirror-theme-abyss": "npm:^4.22.0"
+    "@uiw/codemirror-theme-aura": "npm:^4.22.0"
     "@uiw/react-codemirror": "npm:^4.22.0"
     class-variance-authority: "npm:^0.7.0"
     clsx: "npm:^2.1.1"
