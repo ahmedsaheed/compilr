@@ -50,6 +50,7 @@ export default function Home() {
   const [value, setValue] = useState<string>(languages.java.sampleCode);
   const [languageSupport, setLanguageSupport] = useState([java()]);
   const [compiledResult, setCompiledResult] = useState<string>("");
+  const [errorResp, setErrorResp] = useState<boolean>(false);
 
   // @ts-ignore
   const onEditorValueChange = useCallback((val, viewUpdate) => {
@@ -96,6 +97,7 @@ export default function Home() {
 
   const compile = async () => {
     setCompiledResult("");
+    setErrorResp(false);
     fetch("http://localhost:8080/compile", {
       method: "POST",
       headers: {
@@ -108,8 +110,16 @@ export default function Home() {
     })
       .then((response) => response.json())
       .then((data) => {
-        const { lang, code, imageName, compiledResult } = data;
-        setCompiledResult(compiledResult.trim());
+        const { compiledResult } = data;
+        const { output, error } = compiledResult;
+        if (error) {
+          console.log("Error");
+          setCompiledResult(error);
+          setErrorResp(true);
+
+          return;
+        }
+        setCompiledResult(output.trim());
         console.log("Response from server", data);
       })
       .catch((error) => console.error(error));
@@ -133,7 +143,8 @@ export default function Home() {
 
       <h2 className=" pb-2 mt-4 p-4 text-xl text-white">Editor</h2>
       <CodeMirror
-        className="w-full mt-4 p-4"
+        className="w-full mt-4 p-4 "
+        style={{ fontSize: 18 }}
         value={value}
         height="500px"
         theme={aura}
@@ -153,7 +164,15 @@ export default function Home() {
       {compiledResult != "" && (
         <div className="mt-4 p-4">
           <h2 className=" pb-2 text-xl text-white">Compiled Result</h2>
-          <pre className="bg-slate-800 p-4 text-white">{compiledResult}</pre>
+          <pre
+            className={
+              errorResp
+                ? "bg-slate-800 p-4 text-red-500"
+                : "bg-slate-800 p-4 text-white"
+            }
+          >
+            {compiledResult}
+          </pre>
         </div>
       )}
     </main>
