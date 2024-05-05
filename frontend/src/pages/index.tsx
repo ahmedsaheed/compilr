@@ -131,6 +131,7 @@ export default function Home() {
         ))}
       </select>
 
+      <h2 className=" pb-2 mt-4 p-4 text-xl text-white">Editor</h2>
       <CodeMirror
         className="w-full mt-4 p-4"
         value={value}
@@ -149,10 +150,12 @@ export default function Home() {
         </button>
       </div>
 
-      <div className="mt-4">
-        <h2 className="text-xl font-bold">Compiled Result</h2>
-        <pre className="bg-slate-800 p-4 text-white">{compiledResult}</pre>
-      </div>
+      {compiledResult != "" && (
+        <div className="mt-4 p-4">
+          <h2 className=" pb-2 text-xl text-white">Compiled Result</h2>
+          <pre className="bg-slate-800 p-4 text-white">{compiledResult}</pre>
+        </div>
+      )}
     </main>
   );
 }
