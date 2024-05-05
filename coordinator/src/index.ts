@@ -22,8 +22,6 @@ app.post("/compile", async (req, res) => {
   }
 
   const isCompilable = lang === "java" || lang === "c" || lang === "python";
-  let imageName = isCompilable ? `${lang}-compiler` : undefined;
-
   if (!isCompilable)
     return res.status(400).json({ message: "Invalid language" });
 
@@ -34,6 +32,9 @@ app.post("/compile", async (req, res) => {
       return res.json({ compiledResult });
     case "java":
       compiledResult = await compileJavaCode(code);
+      return res.json({ compiledResult });
+    case "c":
+      compiledResult = await compileCCode(code);
       return res.json({ compiledResult });
     default:
       break;
@@ -57,7 +58,7 @@ const runPythonCode = async (code: string): Promise<CompilerResponse> => {
             console.error(`exec error: ${error}`);
             resolve({
               output: null,
-              error: cleanErrorMessage(error.message, "python"),
+              error: cleanErrorMessage(error.message, code, "python"),
             });
           }
           console.log(`stdout: ${stdout}`);
@@ -88,7 +89,7 @@ const compileJavaCode = async (code: string): Promise<CompilerResponse> => {
           console.error(`exec error: ${error}`);
           resolve({
             output: null,
-            error: cleanErrorMessage(error.message, "java"),
+            error: cleanErrorMessage(error.message, code, "java"),
           });
         }
         console.log(`stdout: ${stdout}`);
@@ -102,18 +103,53 @@ const compileJavaCode = async (code: string): Promise<CompilerResponse> => {
   });
 };
 
-const cleanErrorMessage = (errorMessage: string, lang: string): string => {
+const compileCCode = async (code: string): Promise<CompilerResponse> => {
+  return new Promise((resolve, reject) => {
+    exec(
+      `docker run --rm -i c-env sh -c 'echo "$1" > main.c && gcc main.c -o main && ./main' -- '${code}'`,
+      (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          resolve({
+            output: null,
+            error: cleanErrorMessage(error.message, code, "c"),
+          });
+        }
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+        resolve({
+          output: stdout,
+          error: null,
+        });
+      },
+    );
+  });
+};
+
+const cleanErrorMessage = (
+  errorMessage: string,
+  code: string,
+  lang: string,
+): string => {
   switch (lang) {
     case "java":
-      return errorMessage.replace(
-        `Command failed: docker run --rm -i java-env sh -c 'echo "$1" > Main.java && javac Main.java && java Main' -- `,
-        "",
-      );
+      return errorMessage
+        .replace(
+          `Command failed: docker run --rm -i java-env sh -c 'echo "$1" > Main.java && javac Main.java && java Main' -- `,
+          "",
+        )
+        .replace(code, "");
     case "python":
-      return errorMessage.replace(
-        `Command failed: docker run --rm -i python-env python -c `,
-        "",
-      );
+      return errorMessage
+        .replace(`Command failed: docker run --rm -i python-env python -c `, "")
+        .replace(code.replace(/"/g, '\\"'), "");
+    case "c":
+      return errorMessage
+        .replace(
+          `Command failed: docker run --rm -i c-env sh -c 'echo "$1" > main.c && gcc main.c -o main && ./main' -- '`,
+          "",
+        )
+        .replace(code, "");
     default:
       return errorMessage;
   }
