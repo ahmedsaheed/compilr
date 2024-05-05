@@ -19,13 +19,38 @@ export default function Home() {
       }
           `,
     },
-    python: { name: "python", sampleCode: 'print("Hello, World!")' },
+    python: {
+      name: "python",
+      sampleCode: `
+      # Python Program to find the area of triangle
+
+      a = 5
+      b = 6
+      c = 7
+
+      # Uncomment below to take inputs from the user
+      # a = float(input('Enter first side: '))
+      # b = float(input('Enter second side: '))
+      # c = float(input('Enter third side: '))
+
+      # calculate the semi-perimeter
+      s = (a + b + c) / 2
+
+      # calculate the area
+      area = (s*(s-a)*(s-b)*(s-c)) ** 0.5
+      print('The area of the triangle is %0.2f' %area)
+      `,
+    },
     c: { name: "c", sampleCode: 'printf("Hello, World!");' },
   };
 
-  const [selectedLanguage, setSelectedLanguage] = useState(languages.java.name);
-  const [value, setValue] = useState(languages.java.sampleCode);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>(
+    languages.java.name,
+  );
+  const [value, setValue] = useState<string>(languages.java.sampleCode);
   const [languageSupport, setLanguageSupport] = useState([java()]);
+  const [compiledResult, setCompiledResult] = useState<string>("");
+
   // @ts-ignore
   const onEditorValueChange = useCallback((val, viewUpdate) => {
     console.log("val:", val);
@@ -70,6 +95,7 @@ export default function Home() {
   };
 
   const compile = async () => {
+    setCompiledResult("");
     fetch("http://localhost:8080/compile", {
       method: "POST",
       headers: {
@@ -81,7 +107,11 @@ export default function Home() {
       }),
     })
       .then((response) => response.json())
-      .then((data) => console.log("Response from server", data))
+      .then((data) => {
+        const { lang, code, imageName, compiledResult } = data;
+        setCompiledResult(compiledResult.trim());
+        console.log("Response from server", data);
+      })
       .catch((error) => console.error(error));
   };
   return (
@@ -117,6 +147,11 @@ export default function Home() {
         >
           Compile
         </button>
+      </div>
+
+      <div className="mt-4">
+        <h2 className="text-xl font-bold">Compiled Result</h2>
+        <pre className="bg-slate-800 p-4 text-white">{compiledResult}</pre>
       </div>
     </main>
   );
