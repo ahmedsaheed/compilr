@@ -2,7 +2,7 @@
 FROM node:22-slim
 
 # Set the working directory inside the container
-WORKDIR /usr/local/app
+WORKDIR /app
 
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
@@ -14,8 +14,8 @@ RUN npm install
 COPY . .
 
 # Expose the port on which the server will run
-ENV PORT 80
-EXPOSE 80
+ENV PORT 8080
+EXPOSE 8080
 
 # Start the server
-CMD ["npm", "start"]
+CMD ["npm", "run", "build-exec"]
