@@ -1,5 +1,8 @@
 # Use the official Node.js image as the base image
-FROM node:22-slim
+FROM docker:latest
+
+# Install the latest version of Node.js
+RUN apk add --update nodejs npm
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -16,6 +19,7 @@ COPY . .
 # Expose the port on which the server will run
 ENV PORT 8080
 EXPOSE 8080
+
 
 # Start the server
 CMD ["npm", "run", "build-exec"]
